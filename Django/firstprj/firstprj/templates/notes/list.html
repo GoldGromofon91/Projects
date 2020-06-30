@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Заметки{% endblock %}
+
+{% block content %}
+	{% if notes_list %}
+	
+		{% for a in notes_list %}
+
+			<a href="{% url 'notes:detail' a.id %}">{{a.category_note}}</a>
+
+		{% endfor %}
+
+	{% else %}
+		Заметок нет...
+	{% endif %}
+<hr>
+
+<hr>
+
+<form action="{% url 'notes:create' %}" method="POST">
+
+{% csrf_token %}
+
+<input type="text" required="" placeholder="Введите название" name="category"><br>
+<textarea name="text" required="" placeholder="Текст заметки" cols="40" rows="10"></textarea><br>
+<button type="submit">Добавить заметку</button></form>
+{% endblock %}

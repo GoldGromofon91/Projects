@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}{{note.category_note}}{% endblock %}
+
+{% block content %}
+
+<h2>{{note.category_note}}</h2>
+
+<p>{{note.text_note}}</p>
+
+<em>{{note.pub_date}}</em>
+
+<hr>
+<hr>
+
+<form action="{% url 'notes:delete' note.id %}" method="POST">
+	{% csrf_token %}
+	<button type="submit">Удалить заметку</button>
+</form>
+
+<hr>
+<hr>
+
+<form action="{% url 'notes:change' note.id %}" method="POST">
+	{% csrf_token %}
+	<input type="text" value="{{note.category_note}}" required="" placeholder="Введите название" name="category"><br>
+	
+	<textarea name="text" required="" placeholder="Введите текст" cols="40" rows="10">{{note.text_note}}
+	</textarea><br>
+	
+	<select name="status">
+		<option {% if note.status_note == '0' %}selected{% endif %} value="0">Не выполнено</option>
+		<option {% if note.status_note == '1' %}selected{% endif %} value="1">В процессе</option>
+		<option {% if note.status_note == '2' %}selected{% endif %} value="2">Выполнено</option>
+	</select>
+
+	<button type="submit">Изменить заметку</button>
+</form>
+
+<form action="{% url 'notes:back' %}" method="POST">
+	{% csrf_token %}
+	<button type="submit">Назад</button>
+</form>
+
+{% endblock %}
+
+
+
+
