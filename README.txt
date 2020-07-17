@@ -14,3 +14,6 @@ Using: http://inclem.net/pages/kivy-crash-course/
 
 Using:  https://www.youtube.com/watch?v=w4nrT7emiVc&t=3050s
 	https://docs.djangoproject.com/en/3.0/intro/
+
+4. Test tasks
+Test assignments, at various stages of the interview.
