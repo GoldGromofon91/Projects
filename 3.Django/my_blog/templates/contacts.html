@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Контакты{% endblock %}
+{% block content %}
+	<h3>В случае, если вы рекрутер или HR - manager какого либо проекта и вы ищите   "Ярого Джуна" напишите мне:</h3> 
+	<p>{{ error }}</p>
+	<form method="post" action="contacts">
+			{% csrf_token %}
+		<!-- <fieldset title="Контактные данные"> -->
+			<legend>Контактные данные</legend>
+			Введите имя <input type="text" name="user_fb" placeholder="Ваше имя" size="50">
+			<br>
+			Введите email <input type="email" name="email_fb" placeholder="Ваш email" size="48">
+			<br>
+			<textarea  name="text_fb"  cols="60" rows="10" placeholder="Сообщение"></textarea>
+			<br>
+			<button>Отправить</button>
+<!-- 		</fieldset> -->
+	</form>
+{% endblock %}

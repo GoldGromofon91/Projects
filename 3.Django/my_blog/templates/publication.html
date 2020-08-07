@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}{{ publications.title }}{% endblock %}
+{% block content %}
+	<h2>{{ publications.title }}</h2>
+	<h3><i>Опубликовано: {{ publications.date|date:"H:i d/n/Y" }}</i></h3>
+	<p>{{ publications.text|safe }}</p>
+	<br>
+	<hr>
+	<h2>Оставить коммент</h2>
+	<p>{{ error }}</p>
+	<form method="POST" action="/publication/{{ publications.id }}">
+		{% csrf_token %}
+		<input type="text" name="author_comment" placeholder="Имя" size="42"><br>
+		<textarea name="text_comment" cols="40"  placeholder="Текст"></textarea><br>
+		<button >Добавить комментарий</button>
+	</form>
+	<hr>
+	<table>
+		<th>
+			<tr>
+				<td>
+					Дата
+				</td>
+				<td>
+					Имя
+				</td>
+				<td>
+					Комментарий
+				</td>
+			</tr>
+		</th>
+		<tbody>	
+			{% for com in comments_user %}
+				<tr>
+					<td>{{ com.date_comment|date:"H:i d/n/Y" }}</td>
+					<td>{{ com.author_name }}</td>
+					<td>{{ com.text_comment }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

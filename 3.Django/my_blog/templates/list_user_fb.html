@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Feedback{% endblock %}
+{% block content %}
+
+	<h2>Сообщения</h2>
+	<table>
+		<th>
+			<tr>
+				<td>
+					№
+				</td>
+				<td>
+					От кого(Имя)
+				</td>
+				<td>
+					От кого(Email)
+				</td>
+				<td>
+					Текс обращения
+				</td>
+			</tr>
+		</th>
+		<tbody>
+			{% for pub in user_appeal %}
+				<tr>
+					<td>{{ pub.id }}</td>
+					<td>{{ pub.user_fb }}</td>
+					<td>{{ pub.email_fb }}</td>
+					<td>{{ pub.text_fb }}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+{% endblock %}
