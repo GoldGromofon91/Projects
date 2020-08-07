@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Feedback{% endblock %}
+{% block content %}
+	<div class="all_users_style">
+		<h2>Registered users</h2>
+		<table class="table table-dark">
+			<thead>
+		  		<tr>
+			  		<th scope="col">#</th>
+			  		<th scope="col">Registration date</th>
+			  		<th scope="col">Name user</th>
+			  		<th scope="col">Email user</th>
+		    	</tr>
+		  	</thead>
+		  	<tbody>
+		  		{% for usr in user_appeal %}
+					<tr>
+						<th scope="row">{{ usr.id }}</th>
+						<td>{{ usr.created_at|date:"H:i d M Y" }}</td>
+						<td>{{ usr.name }}</td>
+						<td>{{ usr.email }}</td>
+					</tr>
+				{% endfor %}
+		  </tbody>
+		</table>
+	</div>
+{% endblock %}

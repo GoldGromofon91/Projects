@@ -1,0 +1,72 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+.padding-site {
+  padding-left: 98px;
+  padding-right: 98px;
+}
+
+
+.clearfix:after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.to-right {
+  float: right;
+}
+
+.to-left {
+  float: left;
+}
+
+/*Colors and typography*/
+
+
+.primary {
+  color: #212121;
+}
+
+.secondary {
+  color: #6c6c6c;
+}
+
+.secondaryAlt {
+  color: #c7c7c7;
+}
+
+.secondaryAltDarker {
+  color: #9c9c9c;
+}
+
+.ternary {
+  color: #ffffff;
+}
+
+.ternary-green {
+  color: #43a047;
+}
+
+.ternary-blue {
+  color: #1e88e5;
+}
+.ternary-red {
+  color: #e53935;
+}
+
+.bg-secondary{
+  background-color: #f7f7f7;
+}
+
+
