@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from accounts.models import Users_reg
 
-# from validate_email import validate_email
+from email_validator import validate_email, EmailNotValidError
 import re
 import hashlib
 
@@ -40,10 +40,14 @@ def registration(request):
 		name_user = request.POST.get('user_name_reg','0')
 		email = request.POST.get('user_email_reg','0')
 		us_pass = request.POST.get('user_password_reg','0')
-		match = re.search(r'[\w.-]+@[\w.-]+.\w+', email)
+		try:
+			valid = validate_email(email)
+		except EmailNotValidError as e:
+			return render(request, 'registration.html',{ 'error': 'Your email is not valid' })	
+		# match = re.search(r'[\w.-]+@[\w.-]+.\w+', email)
 		# print(match)
 		# print(f'Name-{name_user}, EMAIL-{email}, pass-{us_pass}')
-		if match:
+		if valid:
 			hash_user_pass = transformat(us_pass,email) 
 			add_usr = Users_reg(name=name_user,password=hash_user_pass,email=email)
 			add_usr.save()
