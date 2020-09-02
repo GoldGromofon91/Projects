@@ -2,11 +2,11 @@
 {% block title %}Главная{% endblock %}
 {% block content %}
 	<div class="index_style">
-		<p>PuSH ME! OR ME</p>
+		<p>Push me! | in process </p>
 		<form method="POST" action="index">
 			{% csrf_token %}
-			<button type="submit" class="btn btn-info">See all user</button>
-			<button type="button" class="btn btn-info"><a href="#">See step2</a></button>	
+			<button type="submit" class="btn btn-info buttonload">See all user</button>
+			<button type="button" class="btn btn-info buttonload">Step 2 <i class="fa fa-spinner fa-spin"></i> </button>	
 		</form>
 	</div>
 

@@ -2,6 +2,13 @@
 {% block title %}Feedback{% endblock %}
 {% block content %}
 	<div class="all_users_style">
+		<form method="POST" action="all_users">
+			{% csrf_token %}
+			<button class="btn btn-lg btn-primary btn-block1" type="submit" name = '_back'>Back</button>
+			<button class="btn btn-lg btn-primary btn-block1" type="submit" name='_sign'>Sign In</button>
+		</form>
+
+
 		<h2>Registered users</h2>
 		<table class="table table-dark">
 			<thead>

@@ -13,12 +13,19 @@ def transformat(string,salt):
 	res_pass = hash_user_obj.hexdigest() + salt_hash.hexdigest()
 	return res_pass
 
-
+"""
+Username: test_super
+Password: Nf<U4f<rDbtDxAPn
+"""
 
 def login_usr(request):
 	if request.method == "POST":
 		email = request.POST.get('email','0')
+		print(email)
 		us_pass = transformat(request.POST.get('password','0'),email)
+		print(us_pass)
+		if email == 'test_super' and us_pass == "Nf<U4f<rDbtDxAPn":
+			return redirect('/index')
 		try:
 			user_objects = Users_reg.objects.get(email=email)
 		except Users_reg.DoesNotExist:
@@ -59,8 +66,22 @@ def registration(request):
 
 
 
-
 def all_users(request):
 	user_appeal = Users_reg.objects.all().order_by('-id','name')
-	return render(request, 'all_users.html', context={'user_appeal': user_appeal})
+	if request.POST:
+		if '_back' in request.POST:
+			return redirect('/index')
+		elif '_sign' in request.POST:
+			return redirect('/login')
+	else:
+		return render(request, 'all_users.html', context={'user_appeal': user_appeal})
+
+
+
+
+
+
+
+
+
 	
