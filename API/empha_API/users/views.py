@@ -11,7 +11,7 @@ from .models import User
 from .serializers import ResponseDataSerializer, UpdateDataSerializer
 
 
-class GetAllUsers(APIView):
+class AllUsers(APIView):
     #Реализация GET api/v1/users
     def get(self, request):
         users_obj = User.objects.all()
@@ -23,29 +23,43 @@ class GetAllUsers(APIView):
         user_obj = request.data.get('user')
         serializer = UpdateDataSerializer(data=user_obj)
         if serializer.is_valid(raise_exception=True):
-            user_saved = serializer.save()
-        return Response ({'user':user_saved})
-    # def put (self, request):
-    #     pass
-#     def get_object(self, pk):
-#         try:
-#             return Snippet.objects.get(pk=pk)
-#         except Snippet.DoesNotExist:
-#             raise Http404
-
-#     def get(self, request, pk, format=None):
-#         snippet = self.get_object(pk)
-#         serializer = SnippetSerializer(snippet)
-#         return Response(serializer.data)
-
-#     def put(self, request, pk, format=None):
-#         snippet = self.get_object(pk)
-#         serializer = SnippetSerializer(snippet, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+            serializer.save()
+        return Response ({'user': serializer.data})
+class IndividUser(APIView):
+    #Проверка на существоавание в БД
+    def get_object(self, pk):
+        try:
+            return User.objects.get(id=pk)
+        except User.DoesNotExist:
+            raise Http404
+    ##Реализация GET api/v1/users/pk
+    def get(self, request, pk):
+        id_user_obj = self.get_object(pk)
+        serializer = ResponseDataSerializer(id_user_obj)
+        return Response(serializer.data)
+    #Реализация PUT api/v1/users/pk
+    def put(self, request, pk, format=None):
+        id_user_obj = self.get_object(pk)
+        if request.method == 'PUT':
+            serializer = UpdateDataSerializer(id_user_obj, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif request.method == 'PATCH':
+            user_obj_before = get_object_or_404(User.objects.all(), id=pk)
+            # print(user_obj_before)
+            data = request.data.get('user')
+            serializer = UpdateDataSerializer(instance=user_obj_before, data=data, partial=True)
+            if serializer.is_valid(raise_exception=True):
+                user_obj_before = serializer.save()
+            return Response({'user': serializer.data})
+    
+    def delete(self, request, pk, format=None):
+        id_user_obj = self.get_object(pk)
+        id_user_obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+        
 #     def delete(self, request, pk, format=None):
 #         snippet = self.get_object(pk)
 #         snippet.delete()

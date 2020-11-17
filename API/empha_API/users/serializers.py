@@ -21,7 +21,6 @@ class ResponseDataSerializer(serializers.Serializer):
     is_superuser = serializers.BooleanField()
 
     def create(self, validated_data):
-        # TODO валидация на проверку добавления 
         return User.objects.create(**validated_data)
 
 
@@ -35,9 +34,8 @@ class UpdateDataSerializer(serializers.Serializer):
     is_superuser = serializers.BooleanField(required=False, default=False)
 
     def create(self, validated_data):
-        # TODO валидация на проверку добавления 
         return User.objects.create(**validated_data)
-
+    
     def update(self, instance, validated_data):
         instance.username = validated_data.get('username', instance.username)
         instance.first_name = validated_data.get('first_name', instance.first_name)
