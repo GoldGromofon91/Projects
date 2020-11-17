@@ -1,7 +1,7 @@
 from django.db import models
 
 class User(models.Model):
-    username = models.CharField(max_length=150)
+    username = models.CharField(max_length=150, unique=True)
     first_name = models.CharField(max_length=30, default='first_name')
     last_name  = models.CharField(max_length=30, default='last_name')
     password = models.CharField(max_length=128)
@@ -12,7 +12,7 @@ class User(models.Model):
     def __str__(self):
         return self.username
 
-# class AuthToken(models.Model):
-#     token = models.TextField()
-#     user = models.ForeignKey(User, on_delete=models.CASCADE,)
+class AuthToken(models.Model):
+    token = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE,)
 

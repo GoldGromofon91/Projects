@@ -1,3 +1,4 @@
+import hashlib
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,7 +9,28 @@ from rest_framework.generics import get_object_or_404
 from django.http import Http404
 
 from .models import User
-from .serializers import ResponseDataSerializer, UpdateDataSerializer
+from .serializers import ResponseDataSerializer, UpdateDataSerializer, AuthSerializer
+
+
+def transformat(us_log,us_pass):
+	hash_user_obj = hashlib.sha224(us_pass.encode('ascii'))
+	salt_hash = hashlib.sha1(us_log.encode('ascii'))
+	res_pass = hash_user_obj.hexdigest() + salt_hash.hexdigest()
+	return res_pass
+
+
+class AuthToken(APIView):
+    #Реализация GET api/v1/users
+    def post (self, request):
+        user_obj = request.data.get('user')
+        hash_pass = transformat(user_obj['username'],user_obj['password'])
+        user_obj['password'] = hash_pass
+        serializer = AuthSerializer(data=user_obj)
+        print(serializer)
+        if serializer.is_valid(raise_exception=True):
+            print('Valid')
+            serializer.save()
+        return Response ({'token': serializer.data['password']})
 
 
 class AllUsers(APIView):
@@ -46,7 +68,7 @@ class IndividUser(APIView):
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    #Реализация PATCH api/v1/users/pk
     def patch(self,request,pk):
         id_user_obj = self.get_object(pk)
         serializer = UpdateDataSerializer(data=request.data, partial=True)
@@ -54,41 +76,9 @@ class IndividUser(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    #Реализация DELETE api/v1/users/pk
     def delete(self, request, pk, format=None):
         id_user_obj = self.get_object(pk)
         id_user_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
         
-#     def delete(self, request, pk, format=None):
-#         snippet = self.get_object(pk)
-#         snippet.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-# @api_view(['GET','PUT','PATCH','DELETE'])
-# def individual_method(request,pk):
-#     try:
-#         user_obj = User.objects.get(id=pk)
-#         # print(type(user_obj), user_obj)
-#     except User.DoesNotExist:
-#         return Response(status=status.HTTP_404_NOT_FOUND)
-
-#     if request.method == 'GET':
-#         serializer = UserSerializer(user_obj)
-#         return Response(serializer.data)
-#     elif request.method == 'PUT':
-#         serializer = UserSerializer(user_obj, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-#     elif request.method == 'PATCH':
-#         user_obj_before = get_object_or_404(User.objects.all(), id=pk)
-#         # print(user_obj_before)
-#         data = request.data.get('user')
-#         serializer = UserSerializer(instance=user_obj_before, data=data, partial=True)
-#         if serializer.is_valid(raise_exception=True):
-#             user_obj_before = serializer.save()
-#         return Response({'user': serializer.data})
-#     elif request.method == 'DELETE':
-#         user_obj.delete()
-#         return Response('User deleted')

@@ -1,15 +1,12 @@
 from rest_framework import serializers
-
 from .models import User
+
+
 """
-1. Вьюхи декоратор на класс меняем
-2. Пересмотреть валидаацию на уровне сериалайзера првоерка is_active +(возможно разбить на две части и использовать в своих вьюхах)
-3. Убрать валдицаю в моделях при создании БД
-3.1. Валидация хешейн а пароль
-3.1.2 ПК на юсернейм
-3.1.3
 4. Начать писать тесты
 """
+
+
 class ResponseDataSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     username = serializers.CharField(max_length=150)
@@ -37,7 +34,7 @@ class UpdateDataSerializer(serializers.Serializer):
         return User.objects.create(**validated_data)
     
     def update(self, instance, validated_data):
-        print(validated_data)
+        # print(validated_data)
         instance.username = validated_data.get('username', instance.username)
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
@@ -48,3 +45,12 @@ class UpdateDataSerializer(serializers.Serializer):
         
         instance.save()
         return instance
+
+
+class AuthSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=150)
+    password = serializers.CharField(max_length=128)
+
+    def create(self, validated_data):
+        return User.objects.create(**validated_data)
+
