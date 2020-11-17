@@ -1,10 +1,10 @@
 from django.urls import path
 
-from .views import GetAllUsers, individual_method
+from .views import GetAllUsers
 
 app_name = 'users'
 
 urlpatterns = [
     path('users/', GetAllUsers.as_view()),
-    path('users/<int:pk>', individual_method)
+    # path('users/<int:pk>', individual_method)
 ]
