@@ -30,13 +30,14 @@ class UpdateDataSerializer(serializers.Serializer):
     last_name  = serializers.CharField(required=False,max_length=30, default='last_name')
     password = serializers.CharField(required=True,max_length=128)
     is_active = serializers.BooleanField(required=True)
-    last_login = serializers.DateTimeField(required=False, default=False) 
+    last_login = serializers.DateTimeField(required=False) 
     is_superuser = serializers.BooleanField(required=False, default=False)
 
     def create(self, validated_data):
         return User.objects.create(**validated_data)
     
     def update(self, instance, validated_data):
+        print(validated_data)
         instance.username = validated_data.get('username', instance.username)
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)

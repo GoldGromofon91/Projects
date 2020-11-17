@@ -46,14 +46,14 @@ class IndividUser(APIView):
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        elif request.method == 'PATCH':
-            user_obj_before = get_object_or_404(User.objects.all(), id=pk)
-            # print(user_obj_before)
-            data = request.data.get('user')
-            serializer = UpdateDataSerializer(instance=user_obj_before, data=data, partial=True)
-            if serializer.is_valid(raise_exception=True):
-                user_obj_before = serializer.save()
-            return Response({'user': serializer.data})
+    
+    def patch(self,request,pk):
+        id_user_obj = self.get_object(pk)
+        serializer = UpdateDataSerializer(data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     def delete(self, request, pk, format=None):
         id_user_obj = self.get_object(pk)
