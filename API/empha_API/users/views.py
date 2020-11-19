@@ -12,6 +12,7 @@ from .models import User, AuthToken
 from .serializers import ResponseDataSerializer, UpdateDataSerializer, AuthSerializer
 import uuid
 
+
 def transformat(us_log,us_pass):
     """
     Генерирует хэш-пароль + соль на основе(username)
@@ -20,10 +21,10 @@ def transformat(us_log,us_pass):
     salt_hash = hashlib.sha1(us_log.encode('ascii'))
     res_pass = hash_user_obj.hexdigest() + salt_hash.hexdigest()
     return res_pass
+
 def generate_token():
     """Генерация ТОКЕНА """
     token = uuid.uuid4().hex[:32]
-    print(token)
     return token
 
 class Auth(APIView):
@@ -33,8 +34,11 @@ class Auth(APIView):
         serializer = AuthSerializer(data=user_obj)
         if serializer.is_valid(raise_exception=True):
             response_name = serializer.validated_data['username']
-            response_pswd = serializer.validated_data['password']
-            user_indb=User.objects.get(username=response_name)
+            response_pswd = transformat(response_name, serializer.validated_data['password'])
+            try:
+                user_indb =User.objects.get(username=response_name)
+            except User.DoesNotExist:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
             if response_name == user_indb.username and response_pswd == user_indb.password:
                 token = generate_token()
                 auth = AuthToken(user=user_indb,token=token)
@@ -50,15 +54,16 @@ class AllUsers(APIView):
     def get(self, request):
         users_obj = User.objects.all()
         serializer = ResponseDataSerializer(users_obj, many=True)
-        return Response({'user': serializer.data})
+        return Response(serializer.data)
     
     # Реализация POST api/v1/users
     def post (self, request):
         user_obj = request.data
         serializer = UpdateDataSerializer(data=user_obj)
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
-        return Response ({'user': serializer.data})
+            valid_data = serializer.save()
+            respserializer = ResponseDataSerializer(valid_data)
+            return Response(respserializer.data)
 
 class IndividUser(APIView):
     #Проверка на существование в БД
