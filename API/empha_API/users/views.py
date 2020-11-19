@@ -8,9 +8,9 @@ from django.shortcuts import redirect
 from rest_framework.generics import get_object_or_404
 from django.http import Http404
 
-from .models import User
+from .models import User, AuthToken
 from .serializers import ResponseDataSerializer, UpdateDataSerializer, AuthSerializer
-
+import uuid
 
 def transformat(us_log,us_pass):
     """
@@ -20,19 +20,28 @@ def transformat(us_log,us_pass):
     salt_hash = hashlib.sha1(us_log.encode('ascii'))
     res_pass = hash_user_obj.hexdigest() + salt_hash.hexdigest()
     return res_pass
+def generate_token():
+    """Генерация ТОКЕНА """
+    token = uuid.uuid4().hex[:32]
+    print(token)
+    return token
 
-
-class AuthToken(APIView):
+class Auth(APIView):
     #Реализация POST api-token-auth
     def post (self, request):
         user_obj = request.data
-        hash_pass = transformat(user_obj['username'],user_obj['password'])
-        user_obj['password'] = hash_pass
         serializer = AuthSerializer(data=user_obj)
         if serializer.is_valid(raise_exception=True):
-            print('Valid')
-            serializer.save()
-        return Response ({'token': serializer.data['password']})
+            response_name = serializer.validated_data['username']
+            response_pswd = serializer.validated_data['password']
+            user_indb=User.objects.get(username=response_name)
+            if response_name == user_indb.username and response_pswd == user_indb.password:
+                token = generate_token()
+                auth = AuthToken(user=user_indb,token=token)
+                auth.save()
+                return Response({'token':token})
+            else:
+                return Response(status=status.HTTP_401_UNAUTHORIZED)
 
 
 class AllUsers(APIView):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, AuthToken
 
 
 class ResponseDataSerializer(serializers.Serializer):
@@ -23,8 +23,8 @@ class UpdateDataSerializer(serializers.Serializer):
     last_name  = serializers.CharField(required=False,max_length=30, default='last_name')
     password = serializers.CharField(required=True,max_length=128)
     is_active = serializers.BooleanField(required=True)
-    last_login = serializers.DateTimeField(required=False) 
-    is_superuser = serializers.BooleanField(required=False, default=False)
+    last_login = serializers.DateTimeField(read_only=True,required=False) 
+    is_superuser = serializers.BooleanField(read_only=True,required=False, default=False)
 
     def create(self, validated_data):
         return User.objects.create(**validated_data)
@@ -48,6 +48,6 @@ class AuthSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=128)
 
     def create(self, validated_data):
-        return User.objects.create(**validated_data)
+        return AuthToken.objects.create(**validated_data)
 
         
