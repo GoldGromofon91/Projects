@@ -39,6 +39,7 @@ class Auth(APIView):
                 token = generate_token()
                 auth = AuthToken(user=user_indb,token=token)
                 auth.save()
+                user_indb.is_active = 'True'
                 return Response({'token':token})
             else:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
@@ -76,12 +77,13 @@ class IndividUser(APIView):
     #Реализация PUT api/v1/users/pk
     def put(self, request, pk, format=None):
         id_user_obj = self.get_object(pk)
-        if request.method == 'PUT':
-            serializer = UpdateDataSerializer(id_user_obj, data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = UpdateDataSerializer(id_user_obj, data=request.data)
+        if serializer.is_valid():
+            
+            valid_data = serializer.save()
+            print(valid_data, "\n", type(valid_data))
+            return Response(ResponseDataSerializer(valid_data))
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     #Реализация PATCH api/v1/users/pk
     def patch(self,request,pk):

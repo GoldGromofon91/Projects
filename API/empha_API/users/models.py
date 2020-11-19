@@ -10,7 +10,7 @@ class User(models.Model):
     is_superuser = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.username
+        return "User: " + self.username
 
 class AuthToken(models.Model):
     token = models.TextField()
