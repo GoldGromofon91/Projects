@@ -20,15 +20,18 @@ class UpdateDataSerializer(serializers.Serializer):
     username = serializers.CharField(required=True,max_length=150)
     password = serializers.CharField(required=True,max_length=128)
     is_active = serializers.BooleanField(required=True)
-
+    first_name = serializers.CharField(required=False,max_length=30)
+    last_name  = serializers.CharField(required=False,max_length=30)
     
-    # def create(self, validated_data):
-    #     return User.objects.create(**validated_data)
+    def create(self, validated_data):
+        return User.objects.create(**validated_data)
     
     def update(self, instance, validated_data):
         instance.username = validated_data.get('username', instance.username)
         instance.password = validated_data.get('password', instance.password)
         instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
 
         instance.save()
         return instance

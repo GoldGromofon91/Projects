@@ -61,7 +61,7 @@ class AllUsers(APIView):
         return Response ({'user': serializer.data})
 
 class IndividUser(APIView):
-    #Проверка на существоавание в БД
+    #Проверка на существование в БД
     def get_object(self, pk):
         try:
             return User.objects.get(id=pk)
@@ -70,33 +70,33 @@ class IndividUser(APIView):
 
     ##Реализация GET api/v1/users/pk
     def get(self, request, pk):
-        id_user_obj = self.get_object(pk)
-        serializer = ResponseDataSerializer(id_user_obj)
+        user_obj = self.get_object(pk)
+        serializer = ResponseDataSerializer(user_obj)
         return Response(serializer.data)
         
     #Реализация PUT api/v1/users/pk
-    def put(self, request, pk, format=None):
-        id_user_obj = self.get_object(pk)
-        serializer = UpdateDataSerializer(id_user_obj, data=request.data)
+    def put(self, request, pk):
+        user_obj = self.get_object(pk)
+        serializer = UpdateDataSerializer(user_obj,data=request.data)
         if serializer.is_valid():
-            
             valid_data = serializer.save()
-            print(valid_data, "\n", type(valid_data))
-            return Response(ResponseDataSerializer(valid_data))
+            respserializer = ResponseDataSerializer(valid_data)
+            return Response(respserializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     #Реализация PATCH api/v1/users/pk
     def patch(self,request,pk):
-        id_user_obj = self.get_object(pk)
-        serializer = UpdateDataSerializer(data=request.data, partial=True)
+        user_obj = self.get_object(pk)
+        serializer = UpdateDataSerializer(user_obj,data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            valid_data = serializer.save()
+            respserializer = ResponseDataSerializer(valid_data)
+            return Response(respserializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     #Реализация DELETE api/v1/users/pk
-    def delete(self, request, pk, format=None):
-        id_user_obj = self.get_object(pk)
-        id_user_obj.delete()
+    def delete(self, request, pk):
+        user_obj = self.get_object(pk)
+        user_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
         
