@@ -2,11 +2,6 @@ from rest_framework import serializers
 from .models import User
 
 
-"""
-4. Начать писать тесты
-"""
-
-
 class ResponseDataSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     username = serializers.CharField(max_length=150)
@@ -16,12 +11,13 @@ class ResponseDataSerializer(serializers.Serializer):
     is_active = serializers.BooleanField()
     last_login = serializers.DateTimeField() 
     is_superuser = serializers.BooleanField()
-
+    
     def create(self, validated_data):
         return User.objects.create(**validated_data)
 
 
 class UpdateDataSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
     username = serializers.CharField(required=True,max_length=150)
     first_name = serializers.CharField(required=False,max_length=30, default='first_name')
     last_name  = serializers.CharField(required=False,max_length=30, default='last_name')
@@ -54,3 +50,4 @@ class AuthSerializer(serializers.Serializer):
     def create(self, validated_data):
         return User.objects.create(**validated_data)
 
+        

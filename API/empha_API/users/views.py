@@ -13,20 +13,22 @@ from .serializers import ResponseDataSerializer, UpdateDataSerializer, AuthSeria
 
 
 def transformat(us_log,us_pass):
-	hash_user_obj = hashlib.sha224(us_pass.encode('ascii'))
-	salt_hash = hashlib.sha1(us_log.encode('ascii'))
-	res_pass = hash_user_obj.hexdigest() + salt_hash.hexdigest()
-	return res_pass
+    """
+    Генерирует хэш-пароль + соль на основе(username)
+    """
+    hash_user_obj = hashlib.sha224(us_pass.encode('ascii'))
+    salt_hash = hashlib.sha1(us_log.encode('ascii'))
+    res_pass = hash_user_obj.hexdigest() + salt_hash.hexdigest()
+    return res_pass
 
 
 class AuthToken(APIView):
-    #Реализация GET api/v1/users
+    #Реализация POST api-token-auth
     def post (self, request):
-        user_obj = request.data.get('user')
+        user_obj = request.data
         hash_pass = transformat(user_obj['username'],user_obj['password'])
         user_obj['password'] = hash_pass
         serializer = AuthSerializer(data=user_obj)
-        print(serializer)
         if serializer.is_valid(raise_exception=True):
             print('Valid')
             serializer.save()
@@ -39,14 +41,15 @@ class AllUsers(APIView):
         users_obj = User.objects.all()
         serializer = ResponseDataSerializer(users_obj, many=True)
         return Response({'user': serializer.data})
-    # Реализация POST api/v1/users
     
+    # Реализация POST api/v1/users
     def post (self, request):
-        user_obj = request.data.get('user')
+        user_obj = request.data
         serializer = UpdateDataSerializer(data=user_obj)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return Response ({'user': serializer.data})
+
 class IndividUser(APIView):
     #Проверка на существоавание в БД
     def get_object(self, pk):
@@ -54,11 +57,13 @@ class IndividUser(APIView):
             return User.objects.get(id=pk)
         except User.DoesNotExist:
             raise Http404
+
     ##Реализация GET api/v1/users/pk
     def get(self, request, pk):
         id_user_obj = self.get_object(pk)
         serializer = ResponseDataSerializer(id_user_obj)
         return Response(serializer.data)
+        
     #Реализация PUT api/v1/users/pk
     def put(self, request, pk, format=None):
         id_user_obj = self.get_object(pk)
@@ -68,6 +73,7 @@ class IndividUser(APIView):
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     #Реализация PATCH api/v1/users/pk
     def patch(self,request,pk):
         id_user_obj = self.get_object(pk)
@@ -76,6 +82,7 @@ class IndividUser(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     #Реализация DELETE api/v1/users/pk
     def delete(self, request, pk, format=None):
         id_user_obj = self.get_object(pk)
