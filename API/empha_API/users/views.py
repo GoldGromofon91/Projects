@@ -7,11 +7,16 @@ from rest_framework import status
 from django.shortcuts import redirect
 from rest_framework.generics import get_object_or_404
 from django.http import Http404
+from rest_framework import viewsets
 
-from .models import User, AuthToken
-from .serializers import ResponseDataSerializer, UpdateDataSerializer, AuthSerializer
+from .models import User as UserModel
+from .models import AuthToken
+from .serializers import ResponseDataSerializer, UpdateDataSerializer, AuthSerializer, ViewSetSerializer
 import uuid
 
+"""
+Вариант №1 наследование от APIView
+"""
 
 def transformat(us_log,us_pass):
     """
@@ -36,7 +41,7 @@ class Auth(APIView):
             response_name = serializer.validated_data['username']
             response_pswd = transformat(response_name, serializer.validated_data['password'])
             try:
-                user_indb =User.objects.get(username=response_name)
+                user_indb = UserModel.objects.get(username=response_name)
             except User.DoesNotExist:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
             if response_name == user_indb.username and response_pswd == user_indb.password:
@@ -104,4 +109,13 @@ class User(APIView):
         user_obj = self.get_object(pk)
         user_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-        
+
+"""
+    Исправление варианта №1 наследование от ModelViewSet
+"""
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = UserModel.objects.all()
+    serializer_class = ViewSetSerializer
+    
+    
