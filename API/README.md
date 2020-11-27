@@ -8,3 +8,5 @@
 - http://127.0.0.1:8000/api-token-auth/
 - http://127.0.0.1:8000/api/v1/users/
 - http://127.0.0.1:8000/api-token-auth/{...}
+6) Для запуска тестов, находясь в папке проекта выполняем команду:
+    python manage.py test

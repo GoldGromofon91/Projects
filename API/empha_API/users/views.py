@@ -65,7 +65,7 @@ class AllUsers(APIView):
             respserializer = ResponseDataSerializer(valid_data)
             return Response(respserializer.data)
 
-class IndividUser(APIView):
+class User(APIView):
     #Проверка на существование в БД
     def get_object(self, pk):
         try:
