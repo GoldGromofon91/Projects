@@ -11,41 +11,64 @@ from rest_framework import viewsets
 
 from .models import User as UserModel
 from .models import AuthToken
-from .serializers import ResponseDataSerializer, UpdateDataSerializer, AuthSerializer, ViewSetSerializer
+from .serializers import AuthSerializer, ViewSetSerializer
 import uuid
+from django.contrib.auth.hashers import make_password
 
-"""
-Вариант №1 наследование от APIView
-"""
+from django.contrib.auth.backends import BaseBackend
 
-def transformat(us_log,us_pass):
-    """
-    Генерирует хэш-пароль + соль на основе(username)
-    """
-    hash_user_obj = hashlib.sha224(us_pass.encode('ascii'))
-    salt_hash = hashlib.sha1(us_log.encode('ascii'))
-    res_pass = hash_user_obj.hexdigest() + salt_hash.hexdigest()
-    return res_pass
 
 def generate_token():
     """Генерация ТОКЕНА """
     token = uuid.uuid4().hex[:32]
     return token
 
+
+# class Auth(BaseBackend):
+#     #Реализация POST api-token-auth
+#     def authenticate (self, request, username=None, password=None):
+#         user_obj = request.data
+#         print(user_obj)
+#         serializer = AuthSerializer(data=user_obj)
+#         if serializer.is_valid(raise_exception=True):
+#             response_name = serializer.validated_data['username']
+#             # response_pswd = transformat(response_name, serializer.validated_data['password'])
+#             response_pswd = make_password(serializer.validated_data['password'], response_name)
+#             print(response_pswd)
+#             try:
+#                 user_indb = UserModel.objects.get(username=response_name)
+#                 print(user_indb)
+#             except UserModel.DoesNotExist:
+#                 return Response(status=status.HTTP_401_UNAUTHORIZED)
+#             if response_name == user_indb.username and response_pswd == user_indb.password:
+#                 token = generate_token()
+#                 print(token)
+#                 auth = AuthToken(user=user_indb,token=token)
+#                 auth.save()
+#                 user_indb.is_active = 'True'
+#                 return Response({'token':token})
+#             else:
+#                 return Response(status=status.HTTP_401_UNAUTHORIZED)
+
 class Auth(APIView):
     #Реализация POST api-token-auth
     def post (self, request):
         user_obj = request.data
+        print(user_obj)
         serializer = AuthSerializer(data=user_obj)
         if serializer.is_valid(raise_exception=True):
             response_name = serializer.validated_data['username']
-            response_pswd = transformat(response_name, serializer.validated_data['password'])
+            # response_pswd = transformat(response_name, serializer.validated_data['password'])
+            response_pswd = make_password(serializer.validated_data['password'], response_name)
+            print(response_pswd)
             try:
                 user_indb = UserModel.objects.get(username=response_name)
-            except User.DoesNotExist:
+                print(user_indb)
+            except UserModel.DoesNotExist:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
             if response_name == user_indb.username and response_pswd == user_indb.password:
                 token = generate_token()
+                print(token)
                 auth = AuthToken(user=user_indb,token=token)
                 auth.save()
                 user_indb.is_active = 'True'
@@ -53,66 +76,6 @@ class Auth(APIView):
             else:
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-
-class AllUsers(APIView):
-    #Реализация GET api/v1/users
-    def get(self, request):
-        users_obj = User.objects.all()
-        serializer = ResponseDataSerializer(users_obj, many=True)
-        return Response(serializer.data)
-    
-    # Реализация POST api/v1/users
-    def post (self, request):
-        user_obj = request.data
-        serializer = UpdateDataSerializer(data=user_obj)
-        if serializer.is_valid(raise_exception=True):
-            valid_data = serializer.save()
-            respserializer = ResponseDataSerializer(valid_data)
-            return Response(respserializer.data)
-
-class User(APIView):
-    #Проверка на существование в БД
-    def get_object(self, pk):
-        try:
-            return User.objects.get(id=pk)
-        except User.DoesNotExist:
-            raise Http404
-
-    ##Реализация GET api/v1/users/pk
-    def get(self, request, pk):
-        user_obj = self.get_object(pk)
-        serializer = ResponseDataSerializer(user_obj)
-        return Response(serializer.data)
-        
-    #Реализация PUT api/v1/users/pk
-    def put(self, request, pk):
-        user_obj = self.get_object(pk)
-        serializer = UpdateDataSerializer(user_obj,data=request.data)
-        if serializer.is_valid():
-            valid_data = serializer.save()
-            respserializer = ResponseDataSerializer(valid_data)
-            return Response(respserializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    #Реализация PATCH api/v1/users/pk
-    def patch(self,request,pk):
-        user_obj = self.get_object(pk)
-        serializer = UpdateDataSerializer(user_obj,data=request.data, partial=True)
-        if serializer.is_valid():
-            valid_data = serializer.save()
-            respserializer = ResponseDataSerializer(valid_data)
-            return Response(respserializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-    #Реализация DELETE api/v1/users/pk
-    def delete(self, request, pk):
-        user_obj = self.get_object(pk)
-        user_obj.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-"""
-    Исправление варианта №1 наследование от ModelViewSet
-"""
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = UserModel.objects.all()
