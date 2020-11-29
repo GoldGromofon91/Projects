@@ -23,6 +23,22 @@ def generate_token():
     token = uuid.uuid4().hex[:32]
     return token
 
+class UserAuthentication(authentication.BaseAuthentication):
+    def authenticate(self, request):
+        token = request.headers.get('Authorization')
+        if not token:
+            return None
+        token= token.split(' ')
+        if len(token) != 2:
+            return None
+        if token[0] != 'Token':
+            return None 
+        try:
+            token_indb= AuthToken.objects.get(token=token[1])
+        except AuthToken.DoesNotExist:
+            raise exceptions.AuthenticationFailed('Token is wrong')
+        return (token_indb.user, None)
+
 
 class Auth(APIView):
     #Реализация POST api-token-auth
@@ -47,6 +63,8 @@ class Auth(APIView):
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    authentication_classes = [UserAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
     
