@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class User(models.Model):
     username = models.CharField(max_length=150, unique=True)
     first_name = models.CharField(max_length=30, default='first_name')
@@ -14,5 +15,5 @@ class User(models.Model):
 
 class AuthToken(models.Model):
     token = models.TextField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE,)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
