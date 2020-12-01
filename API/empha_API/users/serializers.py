@@ -9,19 +9,19 @@ class AuthSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
     password = serializers.CharField(max_length=128)
 
+    class Meta:
+        model = User
+        fields = ['id', 'token', 'user']
+    
     def create(self, validated_data):
         return AuthToken.objects.create(**validated_data)
 
 
-class UserSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    username = serializers.RegexField('^[\w.@+-]+$',required=True, max_length=150)
-    first_name = serializers.CharField(max_length=30)
-    last_name  = serializers.CharField(max_length=30)
-    password = serializers.RegexField('^(?=.*[A-Z])(?=.*\d).{8,}$',required=True,max_length=128)
-    is_active = serializers.BooleanField(required=True)
-    last_login = serializers.DateTimeField(read_only=True) 
-    is_superuser = serializers.BooleanField(read_only=True)
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'password', 'is_active', 'last_login','is_superuser']
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'], validated_data['username'])
