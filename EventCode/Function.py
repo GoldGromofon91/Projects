@@ -123,24 +123,34 @@ def check_count_tree(road, part=1, stepX=None, stepY=None):
 def get_passport_object(input_data, part=None):
     with open(input_data, 'r') as file:
         obj = file.read().split('\n\n')
-        alpha_objects = [elem.replace('\n', ' ') for elem in obj][:30]
+        alpha_objects = [elem.replace('\n', ' ').strip() for elem in obj]  # [:30]
+        print(alpha_objects)
         passport_data = []
 
         for elem in alpha_objects:
             passport_item = {}
             while True:
                 match = re.match(r'^(\w\w\w):([^\s]+)\s', elem)
-                if not match:break
+                if not match: break
                 key, val = match.groups()
                 passport_item[key] = val
                 elem = elem[match.span()[1]:]
             passport_data.append(passport_item)
+
+        print(passport_data)
     return passport_data
 
 
 def check_passport(passport_data, part=None):
     passport_objects = get_passport_object(passport_data)
-    print(passport_objects)
+    count = 0
+    # for passport in passport_objects:
+    #     print(passport.keys())
+    #     if len(passport.keys()) == 8:
+    #         count += 1
+    #     elif len(passport.keys()) == 7 and 'cid' not in passport.keys():
+    #         count += 1
+    # print(count)
 
 
 if __name__ == '__main__':
