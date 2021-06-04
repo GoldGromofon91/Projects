@@ -16,4 +16,4 @@
 ---
 ##### Примеры:
   * Для проверки из строки браузера перейдите по ccылка из файла [urls.py](https://github.com/GoldGromofon91/Projects/blob/master/%D0%A4%D0%B0%D0%B1%D1%80%D0%B8%D0%BA%D0%B0%20%D1%80%D0%B5%D1%88%D0%B5%D0%BD%D0%B8%D0%B9/server/polls/urls.py)
-  * Для прохождения опроса необходимо воспользоваться примером из [файла](https://github.com/GoldGromofon91/Projects/blob/master/%D0%A4%D0%B0%D0%B1%D1%80%D0%B8%D0%BA%D0%B0%20%D1%80%D0%B5%D1%88%D0%B5%D0%BD%D0%B8%D0%B9/example.txt)
+  * Для прохождения опроса необходимо воспользоваться примером из [example.txt](https://github.com/GoldGromofon91/Projects/blob/master/%D0%A4%D0%B0%D0%B1%D1%80%D0%B8%D0%BA%D0%B0%20%D1%80%D0%B5%D1%88%D0%B5%D0%BD%D0%B8%D0%B9/example.txt)
