@@ -1,4 +1,4 @@
-from Function import check_2020, check_password,check_count_tree
+from Function import check_2020, check_password,check_count_tree, check_passport
 
 print('*' * 100 + '\n' + '\t' * 11 + 'First_Day')
 check_2020('input.txt', part=1)
@@ -11,3 +11,7 @@ check_password('input_t2.txt', part=2)
 print('*' * 100 + '\n' + '\t' * 11 + 'Third_Day')
 print(check_count_tree('input_t3.txt', part=1))
 print(check_count_tree('input_t3.txt', part= 2))
+
+print('*' * 100 + '\n' + '\t' * 11 + 'Four_Day')
+check_passport('input_t4.txt', part=1)
+check_passport('input_t4.txt', part=2)

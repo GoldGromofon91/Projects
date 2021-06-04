@@ -124,35 +124,56 @@ def get_passport_object(input_data, part=None):
     with open(input_data, 'r') as file:
         obj = file.read().split('\n\n')
         alpha_objects = [elem.replace('\n', ' ').strip() for elem in obj]  # [:30]
-        print(alpha_objects)
         passport_data = []
-
         for elem in alpha_objects:
             passport_item = {}
             while True:
-                match = re.match(r'^(\w\w\w):([^\s]+)\s', elem)
+                match = re.match(r'^(\w\w\w):([^\s]+)\s?', elem)
                 if not match: break
                 key, val = match.groups()
                 passport_item[key] = val
                 elem = elem[match.span()[1]:]
             passport_data.append(passport_item)
-
-        print(passport_data)
     return passport_data
+
+
+def get_valid_object(item_obj):
+    required_eye_color = ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']
+    hair_color_patter = re.compile(r'^#[0-9a-f]{6}$')
+    pid_patter = re.compile(r'^\d{9}$')
+    byr = item_obj.get('byr')
+    iyr = item_obj.get('iyr')
+    eyr = item_obj.get('eyr')
+    hgt = item_obj.get('hgt')
+    hcl = item_obj.get('hcl')
+    ecl = item_obj.get('ecl')
+    pid = item_obj.get('pid')
+
+    return (
+            byr and 1920 <= int(byr) <= 2002 and
+            iyr and 2010 <= int(iyr) <= 2020 and
+            eyr and 2020 <= int(eyr) <= 2030 and
+            hgt and (hgt.endswith('cm') and 150 <= int(hgt[:-2]) <= 193 or
+                     hgt.endswith('in') and 59 <= int(hgt[:-2]) <= 76) and
+            hcl and hair_color_patter.match(hcl) and
+            ecl and ecl in required_eye_color and
+            pid and pid_patter.match(pid)
+    )
 
 
 def check_passport(passport_data, part=None):
     passport_objects = get_passport_object(passport_data)
     count = 0
-    # for passport in passport_objects:
-    #     print(passport.keys())
-    #     if len(passport.keys()) == 8:
-    #         count += 1
-    #     elif len(passport.keys()) == 7 and 'cid' not in passport.keys():
-    #         count += 1
-    # print(count)
+    if part == 1:
+        for passport in passport_objects:
+            if len(passport.keys()) == 8 or (len(passport.keys()) == 7 and 'cid' not in passport.keys()):
+                count += 1
+        return print(count)
+    elif part == 2:
+        result = len([item for item in passport_objects if get_valid_object(item)])
+        print(result)
 
 
 if __name__ == '__main__':
     print('Loading from Function.py')
-    check_passport('input_t4.txt')
+
