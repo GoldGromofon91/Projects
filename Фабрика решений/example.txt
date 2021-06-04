@@ -1,0 +1,13 @@
+#
+Login: admin
+Pass: admin1234
+
+#Отправка ответа пользователя на вопрос с текстом
+curl -X POST 'http://127.0.0.1:8000/api/poll/'  -d '{"poll_id": "1","question_id":"1","answer":"ответ"}' -H 'Content-Type: application/json'
+
+
+#Отправка ответа пользователя при выборе ответа
+curl -X POST 'http://127.0.0.1:8000/api/poll/'  -d '{"poll_id": "1","question_id":"2","choice_id":"2"}' -H 'Content-Type: application/json' 
+
+##Отправка без ответа ->выдаст ошибку
+curl -X POST 'http://127.0.0.1:8000/api/poll/' -H 'Content-Type: application/json'
